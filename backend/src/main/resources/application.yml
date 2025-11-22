@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/marketgap
+    username: postgres
+    password: YOUR_PASSWORD
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+api:
+  producthunt:
+    key: YOUR_PRODUCTHUNT_KEY
+    base-url: https://api.producthunt.com/v2/api/graphql
+  github:
+    key: YOUR_GITHUB_KEY
+    base-url: https://api.github.com
+  reddit:
+    key: YOUR_REDDIT_KEY
+    base-url: https://www.reddit.com
+  hackernews:
+    base-url: https://hacker-news.firebaseio.com/v0
+  stackoverflow:
+    base-url: https://api.stackexchange.com/2.3

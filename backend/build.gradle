@@ -1,0 +1,65 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.webApp'
+version = '0.0.1-SNAPSHOT'
+description = 'backend'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.postgresql:postgresql:42.7.1")
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // JSON processing
+    implementation("org.springframework.boot:spring-boot-starter-json")
+
+    // Validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Actuator
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    // DevTools (runtime only)
+    runtimeOnly("org.springframework.boot:spring-boot-devtools")
+
+    // Reactor Netty
+    implementation("io.projectreactor.netty:reactor-netty-http")
+
+    // Spring Security (optional)
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
+    // SLF4J API
+    implementation("org.slf4j:slf4j-api")
+
+    // Apache HttpClient 5
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.2")
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

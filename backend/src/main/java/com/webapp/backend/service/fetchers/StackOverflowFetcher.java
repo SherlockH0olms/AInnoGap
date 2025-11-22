@@ -1,0 +1,28 @@
+package com.webapp.backend.service.fetchers;
+
+import com.webapp.backend.config.ApiConfig;
+import com.webapp.backend.model.NicheResult;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class StackOverflowFetcher {
+    private final ApiConfig apiConfig;
+
+    public List<NicheResult> fetch(String query) {
+
+        String url = apiConfig.getStackoverflow().getBaseUrl()
+                + "/search?order=desc&sort=activity&intitle=" + query;
+
+        return List.of(
+                new NicheResult(
+                        "Sample StackOverflow Question",
+                        url,
+                        "StackOverflow"
+                )
+        );
+    }
+}
