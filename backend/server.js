@@ -14,7 +14,12 @@ const { fetchProductHunt } = require('./fetchers/productHunt');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -169,14 +174,13 @@ app.post('/api/analyze', async (req, res) => {
 
     console.log(`\n🤖 Starting AI analysis for: "${niche}"`);
 
-    // Check if n8n API is configured
-    const n8nUrl = process.env.N8N_API_URL;
-    const n8nKey = process.env.N8N_API_KEY;
+    // Check if n8n webhook is configured
+    const n8nUrl = process.env.N8N_WEBHOOK_URL;
 
-    if (!n8nUrl || !n8nKey) {
+    if (!n8nUrl) {
       return res.status(503).json({
         error: 'AI service not configured',
-        message: 'n8n API credentials are not set up. Please configure N8N_API_URL and N8N_API_KEY in environment variables.',
+        message: 'n8n webhook URL is not set up. Please configure N8N_WEBHOOK_URL in environment variables.',
         fallback: {
           gaps: [
             {
@@ -204,8 +208,7 @@ app.post('/api/analyze', async (req, res) => {
     // Call n8n webhook
     const response = await axios.post(n8nUrl, analysisPayload, {
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${n8nKey}`
+        'Content-Type': 'application/json'
       },
       timeout: 30000 // 30 second timeout
     });
@@ -274,7 +277,7 @@ app.get('/api/sources', (req, res) => {
     },
     {
       name: 'Product Hunt',
-      status: process.env.PH_API_KEY ? 'active' : 'inactive',
+      status: process.env.PRODUCTHUNT_API_KEY ? 'active' : 'inactive',
       requiresAuth: true,
       description: 'New product launches'
     }
@@ -311,22 +314,25 @@ app.use((error, req, res, next) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log('\n' + '='.repeat(50));
-  console.log('🚀 Market Gap Finder API Server');
-  console.log('='.repeat(50));
-  console.log(`📡 Server running on http://localhost:${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`⏰ Started at: ${new Date().toISOString()}`);
-  console.log('='.repeat(50) + '\n');
-  console.log('📍 Available endpoints:');
-  console.log(`   GET  http://localhost:${PORT}/api/health`);
-  console.log(`   GET  http://localhost:${PORT}/api/sources`);
-  console.log(`   POST http://localhost:${PORT}/api/research`);
-  console.log(`   POST http://localhost:${PORT}/api/analyze`);
-  console.log('\n' + '='.repeat(50) + '\n');
-});
+// Local development için - Vercel'de çalışmaz
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log('\n' + '='.repeat(50));
+    console.log('🚀 Market Gap Finder API Server');
+    console.log('='.repeat(50));
+    console.log(`📡 Server running on http://localhost:${PORT}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`⏰ Started at: ${new Date().toISOString()}`);
+    console.log('='.repeat(50) + '\n');
+    console.log('📍 Available endpoints:');
+    console.log(`   GET  http://localhost:${PORT}/api/health`);
+    console.log(`   GET  http://localhost:${PORT}/api/sources`);
+    console.log(`   POST http://localhost:${PORT}/api/research`);
+    console.log(`   POST http://localhost:${PORT}/api/analyze`);
+    console.log('\n' + '='.repeat(50) + '\n');
+  });
+}
 
+// Vercel için export - ÇOK ÖNEMLİ!
 module.exports = app;
