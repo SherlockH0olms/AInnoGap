@@ -16,6 +16,11 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "author": "Fireland Hackathon Team",
+  "license": "MIT",
+  "engines": {
+    "node": "22.x"
+  },
   "eslintConfig": {
     "extends": [
       "react-app"
